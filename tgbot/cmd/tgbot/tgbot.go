@@ -14,7 +14,7 @@ import (
 	"github.com/idkwhyureadthis/tgbot/internal/models"
 )
 
-const TOKEN = `7263208833:AAEYVyCBa9237BzJ4LUQf_AEF4hvUHI_VIQ`
+var TOKEN = os.Getenv("TOKEN")
 
 var bot *tgbotapi.BotAPI
 
@@ -44,7 +44,6 @@ var states = make(map[int64]StateMachine)
 
 func connectWithTelegram() {
 	var err error
-	// token := os.Getenv("TOKEN")
 	if bot, err = tgbotapi.NewBotAPI(TOKEN); err != nil {
 		log.Fatal("Failed to connect to Telegram")
 	}
@@ -58,7 +57,7 @@ func main() {
 	}
 
 	connectWithTelegram()
-
+	log.Println("bot succesfully started")
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 3
 

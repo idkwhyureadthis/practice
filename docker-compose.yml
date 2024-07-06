@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: idkwhyureadthis
+      POSTGRES_DB: practice-project
+      POSTGRES_PASSWORD: 123
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U idkwhyureadthis -d practice-project"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  parser:
+    build: parser/
+    environment:
+      SERVER_PORT: 8080
+      NAME: practice-project
+      HOST: db
+      USER: idkwhyureadthis
+      PORT: 5432
+      PASSWORD: 123
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    links:
+      - db
+
+
+  tgbot:
+    build: tgbot/
+    environment:
+      TOKEN: 7263208833:AAEYVyCBa9237BzJ4LUQf_AEF4hvUHI_VIQ
+
+
+volumes:
+  postgres_data:

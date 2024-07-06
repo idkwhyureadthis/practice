@@ -21,11 +21,12 @@ func SetupDatabase() DB {
 	var (
 		name string = os.Getenv("NAME")
 		host string = os.Getenv("HOST")
-		pass string = os.Getenv("PASS")
+		pass string = os.Getenv("PASSWORD")
 		user string = os.Getenv("USER")
 		port string = os.Getenv("PORT")
 	)
-	path := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", user, pass, host, port, name)
+	path := fmt.Sprintf("user=%s pass=%s host=%s port=%s dbname=%s sslmode=disable", user, pass, host, port, name)
+	log.Println(path)
 	conn, err := sql.Open("postgres", path)
 	if err != nil {
 		log.Fatal(err)
