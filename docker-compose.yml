@@ -26,7 +26,7 @@ services:
   tgbot:
     build: tgbot/
     environment:
-      TOKEN: 7263208833:AAEYVyCBa9237BzJ4LUQf_AEF4hvUHI_VIQ
+      TOKEN:
 
 
 volumes:
