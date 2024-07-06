@@ -7,7 +7,7 @@ services:
       POSTGRES_DB: prac-project
 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U idkwhyureadthis -d practice-project"]
+      test: ["CMD-SHELL", "pg_isready -U idkwhyureadthis -d prac-project"]
       interval: 5s
       timeout: 5s
       retries: 5
