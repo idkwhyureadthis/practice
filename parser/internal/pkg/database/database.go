@@ -8,8 +8,7 @@ import (
 	"strings"
 
 	"github.com/idkwhyureadthis/practice/internal/models"
-	"github.com/lib/pq"
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
 )
 
@@ -18,16 +17,11 @@ type DB struct {
 }
 
 func SetupDatabase() DB {
-	var (
-		name string = os.Getenv("NAME")
-		host string = os.Getenv("HOST")
-		pass string = os.Getenv("PASSWORD")
-		user string = os.Getenv("USER")
-		port string = os.Getenv("PORT")
-	)
-	path := fmt.Sprintf("user=%s pass=%s host=%s port=%s dbname=%s sslmode=disable", user, pass, host, port, name)
-	log.Println(path)
-	conn, err := sql.Open("postgres", path)
+	conn, err := sql.Open("pgx", os.Getenv("DATABASE_URL"))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,15 +56,7 @@ func (db *DB) SaveToDB(data models.PageData) {
 		VALUES (LOWER('%s'), LOWER('%s'), LOWER('%s'), %d, %d, LOWER('%s'), %d, LOWER('%s'), LOWER('%s'))
 		`, elem.Id, elem.Name, elem.URL, elem.Salary.SalaryFrom, elem.Salary.SalaryTo, elem.Salary.Currency, experienceNumber, elem.Employer.Name, elem.Area.Name)
 
-		_, err := db.connection.Exec(query)
-		if err != nil {
-			pgErr, _ := err.(*pq.Error)
-			if pgErr.Code == "23305" {
-				continue
-			} else {
-				log.Println(err)
-			}
-		}
+		db.connection.Exec(query)
 	}
 }
 
